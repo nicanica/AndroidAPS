@@ -38,6 +38,7 @@ import info.nightscout.androidaps.interfaces.SensitivityInterface;
 import info.nightscout.androidaps.interfaces.TreatmentsInterface;
 import info.nightscout.androidaps.plugins.Loop.APSResult;
 import info.nightscout.androidaps.plugins.Loop.LoopPlugin;
+import info.nightscout.androidaps.plugins.Overview.events.EventDismissNotification;
 import info.nightscout.androidaps.plugins.Overview.notifications.Notification;
 import info.nightscout.androidaps.plugins.Overview.events.EventNewNotification;
 import info.nightscout.androidaps.plugins.PumpVirtual.VirtualPumpPlugin;
@@ -60,6 +61,8 @@ public class ConfigBuilderPlugin implements PluginBase, ConstraintsInterface, Tr
     private static LoopPlugin activeLoop;
     private static InsulinInterface activeInsulin;
     private static SensitivityInterface activeSensitivity;
+
+    private static long lastProfileSwitchMissingFired = 0l;
 
     static public String nightscoutVersionName = "";
     static public Integer nightscoutVersionCode = 0;
@@ -780,16 +783,25 @@ public class ConfigBuilderPlugin implements PluginBase, ConstraintsInterface, Tr
             ProfileSwitch profileSwitch = getProfileSwitchFromHistory(time);
             if (profileSwitch != null) {
                 if (profileSwitch.profileJson != null) {
+                    MainApp.bus().post(new EventDismissNotification(Notification.PROFILE_SWITCH_MISSING));
                     return profileSwitch.getProfileObject();
                 } else if (activeProfile.getProfile() != null) {
                     Profile profile = activeProfile.getProfile().getSpecificProfile(profileSwitch.profileName);
-                    if (profile != null)
+                    if (profile != null){
+                        MainApp.bus().post(new EventDismissNotification(Notification.PROFILE_SWITCH_MISSING));
                         return profile;
+                    }
                 }
             }
             // Unable to determine profile, failover to default
-            if (activeProfile.getProfile() == null)
+            if (activeProfile.getProfile() == null) {
+                MainApp.bus().post(new EventDismissNotification(Notification.PROFILE_SWITCH_MISSING));
                 return null; //app not initialized
+            }
+            if(lastProfileSwitchMissingFired + 5*1000*60 < System.currentTimeMillis()){
+                lastProfileSwitchMissingFired = System.currentTimeMillis();
+                Notification noProfileSwitchNotif = new Notification(Notification.PROFILE_SWITCH_MISSING, MainApp.sResources.getString(R.string.profileswitch_missing), Notification.NORMAL);
+                MainApp.bus().post(new EventNewNotification(noProfileSwitchNotif));            }
         }
         Profile defaultProfile = activeProfile.getProfile().getDefaultProfile();
         if (defaultProfile != null)

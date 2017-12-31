@@ -800,5 +800,6 @@
     <string name="negativeonly">Negative only</string>
     <string name="overview_editquickwizard_usecob">COB calculation</string>
     <string name="overview_editquickwizard_usetemptarget">Temporary target calculation</string>
+    <string name="profileswitch_missing">ProfileSwitch missing. Please do a profile switch or press \"Activate Profile\" in the LocalProfile.</string>
 </resources>
 
