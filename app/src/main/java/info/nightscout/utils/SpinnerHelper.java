@@ -147,4 +147,5 @@ public class SpinnerHelper implements OnItemSelectedListener {
     public int getSelectedItemPosition() { return spinner.getSelectedItemPosition(); }
     public void setEnabled(boolean enabled) { spinner.setEnabled(enabled); }
     public boolean isEnabled() { return spinner.isEnabled(); }
+    public void setId(int id) { spinner.setId(id); }
 }

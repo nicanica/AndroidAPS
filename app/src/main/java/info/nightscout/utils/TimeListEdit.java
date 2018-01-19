@@ -119,11 +119,17 @@ public class TimeListEdit {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         View childview = intervals[i] = inflater.inflate(R.layout.timelistedit_element, layout, false);
+        childview.setId(View.generateViewId());
         spinners[i] = new SpinnerHelper(childview.findViewById(R.id.timelistedit_time));
+        spinners[i].setId(View.generateViewId());
         numberPickers1[i] = (NumberPicker) childview.findViewById(R.id.timelistedit_edit1);
+        numberPickers1[i].setId(View.generateViewId());
         numberPickers2[i] = (NumberPicker) childview.findViewById(R.id.timelistedit_edit2);
+        numberPickers2[i].setId(View.generateViewId());
         addButtons[i] = (ImageView) childview.findViewById(R.id.timelistedit_add);
+        addButtons[i].setId(View.generateViewId());
         removeButtons[i] = (ImageView) childview.findViewById(R.id.timelistedit_remove);
+        removeButtons[i].setId(View.generateViewId());
 
         final int fixedPos = i;
         addButtons[i].setOnClickListener(new View.OnClickListener() {
